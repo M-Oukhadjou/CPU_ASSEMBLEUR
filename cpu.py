@@ -47,7 +47,7 @@ def executer(affichage):
                 if code_reg not in (0,1,2):
                     affichage.insert("end", "Registre invalide pour STK\n")
                     break
-                if registres["SP"] <= 0:
+                if registres["SP"]>=len(ram):
                     affichage.insert("end", "Stack overflow\n")
                     sys.exit()
                 registres["SP"]+=1
@@ -112,4 +112,19 @@ def executer(affichage):
                 registres["PC"]+=1
                 if registres["FLAGS"]==2:
                     registres["PC"]=adresse
+            case(14):
+                code_reg=ram[registres["PC"]]
+                registres["PC"]+=1
+                if code_reg not in (0,1,2):
+                    affichage.insert("end", "Registre invalide pour POP\n")
+                    break
+                if registres["SP"]<=230:
+                    affichage.insert("end", "Stack underflow\n")
+                    sys.exit()
+                registre_nom=nom[code_reg]
+                valeur=ram[registres["SP"]]
+                registres["SP"]-=1
+                registres[registre_nom]=valeur
+                affichage.insert("end",
+                    f"POP : ({valeur}) enregistré dans le registre {registre_nom}\n")
         affichage.see("end")
