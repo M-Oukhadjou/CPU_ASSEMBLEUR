@@ -1,17 +1,19 @@
 import sys
 
-ram=[0]*256
-registres={"A": 0, "B": 0, "C":0,"PC": 0,"SP":230,"FLAGS":0}
+ram=[0]*1024
+registres={"A": 0, "B": 0, "C":0,"PC": 0,"SP": 900,"FLAGS":0,"GPU_OP":0,"GPU_PARA":0,"GPU_LIMIT":0,"GPU_OFFSET_B":0,"GPU_OFFSET_C":0,
+           "GPU_STATE":0,"GPU_START":0}
 
-registres["SP"]=230
+registres["SP"]=900
 def charger_programme(programme):
     global ram, registres
-    ram[:]=[0]*256
-    registres.update({"A": 0, "B": 0, "C":0,"PC": 0,"SP":230,"FLAGS":0})
+    ram[:]=[0] * 1024
+    registres.update({"A": 0, "B": 0, "C":0,"PC": 0,"SP":900,"FLAGS":0})
     for i in range (len(programme)):
         ram[i]=programme[i]
 
 def executer(affichage):
+    from gpu import vram, dispatcher
     nom=["A","B","C"]
     while registres["PC"] < len(ram):
         instruction_actuelle=registres["PC"]
@@ -39,7 +41,7 @@ def executer(affichage):
                 if registres[nom[s2]]==0:
                     affichage.insert("end","ERR: Div par zero\n")
                     sys.exit()
-                registres[nom[d]]=registres[nom[s1]]//registres[nom[s2]]
+                registres[nom[d]]=registres[nom[s1]]/registres[nom[s2]]
                 affichage.insert("end",f"DIV: {nom[d]}={nom[s1]}/{nom[s2]}({registres[nom[d]]})\n")
             case(5):#stock
                 code_reg = ram[registres["PC"]]
@@ -79,7 +81,7 @@ def executer(affichage):
             case(9):#exit
                 affichage.insert("end", ">>> Fin du programme.\n")
                 break
-            case(10):
+            case(10):#comparaison
                 code_reg1=ram[registres["PC"]]
                 code_reg2=ram[registres["PC"]+1]
                 registres["PC"]+=2
@@ -97,28 +99,28 @@ def executer(affichage):
                     registres["FLAGS"]=1
                 elif val1>val2:
                     registres["FLAGS"]=2
-            case(11):
+            case(11):#JEQ
                 adresse=ram[registres["PC"]]
                 registres["PC"]+=1
                 if registres["FLAGS"]==0:
                     registres["PC"]=adresse
-            case(12):
+            case(12):#JLT
                 adresse=ram[registres["PC"]]
                 registres["PC"]+=1
                 if registres["FLAGS"]==1:
                     registres["PC"]=adresse
-            case(13):
+            case(13):#JGT
                 adresse=ram[registres["PC"]]
                 registres["PC"]+=1
                 if registres["FLAGS"]==2:
                     registres["PC"]=adresse
-            case(14):
+            case(14):#POP
                 code_reg=ram[registres["PC"]]
                 registres["PC"]+=1
                 if code_reg not in (0,1,2):
                     affichage.insert("end", "Registre invalide pour POP\n")
                     break
-                if registres["SP"]<=230:
+                if registres["SP"]<=900:
                     affichage.insert("end", "Stack underflow\n")
                     sys.exit()
                 registre_nom=nom[code_reg]
@@ -127,4 +129,32 @@ def executer(affichage):
                 registres[registre_nom]=valeur
                 affichage.insert("end",
                     f"POP : ({valeur}) enregistré dans le registre {registre_nom}\n")
+            case(15):#LOAD
+                adresse=ram[registres["PC"]]
+                registres["PC"]+=1
+                for i in range (adresse,900,-1):
+                    vram[256-i]=ram[i]
+            case(16):#GPUON
+                registres["GPU_STATE"]=1
+                dispatcher()
+            case(17):#GPUOP
+                registres["GPU_OP"]=ram[registres["PC"]]
+                registres["GPU_PARA"]=ram[registres["PC"]+1]
+                registres["PC"]+=2
+            case(18):#GPULIM
+                registres["GPU_LIMIT"]=ram[registres["PC"]]
+                registres["GPU_OFFSET_B"]=ram[registres["PC"]+1]
+                registres["GPU_OFFSET_C"]=ram[registres["PC"]+2]
+                registres["PC"]+=3
+            case(19):#GPUSTART
+                registres["GPU_START"]=ram[registres["PC"]]
+                registres["PC"]+=1
+            case(20):#wait
+                ms=ram[registres["PC"]]
+                registres["PC"]+=1
+                import time
+                time.sleep(ms / 1000)
+                from gpu import fenetre_ref
+                if fenetre_ref:
+                    fenetre_ref.update()
         affichage.see("end")
