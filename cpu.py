@@ -1,14 +1,14 @@
 import sys
 
 ram=[0]*1024
-registres={"A": 0, "B": 0, "C":0,"PC": 0,"SP": 900,"FLAGS":0,"GPU_OP":0,"GPU_PARA":0,"GPU_LIMIT":0,"GPU_OFFSET_B":0,"GPU_OFFSET_C":0,
+registres={"A": 0, "B": 0, "C":0,"PC": 0,"SP": 800,"FLAGS":0,"GPU_OP":0,"GPU_PARA":0,"GPU_LIMIT":0,"GPU_OFFSET_B":0,"GPU_OFFSET_C":0,
            "GPU_STATE":0,"GPU_START":0}
 
-registres["SP"]=900
+registres["SP"]=800
 def charger_programme(programme):
     global ram, registres
     ram[:]=[0] * 1024
-    registres.update({"A": 0, "B": 0, "C":0,"PC": 0,"SP":900,"FLAGS":0})
+    registres.update({"A": 0, "B": 0, "C":0,"PC": 0,"SP":800,"FLAGS":0})
     for i in range (len(programme)):
         ram[i]=programme[i]
 
@@ -129,11 +129,14 @@ def executer(affichage):
                 registres[registre_nom]=valeur
                 affichage.insert("end",
                     f"POP : ({valeur}) enregistré dans le registre {registre_nom}\n")
-            case(15):#LOAD
-                adresse=ram[registres["PC"]]
+            case(15):#LOADVR
+                nombre_a_copier=ram[registres["PC"]]
                 registres["PC"]+=1
-                for i in range (adresse,900,-1):
-                    vram[256-i]=ram[i]
+                for i in range(nombre_a_copier):
+                    source_addr=registres["SP"] - i
+                    if source_addr>800 and i<256:
+                        vram[i]=ram[source_addr]
+                affichage.insert("end", f"LOADVR : {nombre_a_copier} valeurs copiées vers VRAM\n")
             case(16):#GPUON
                 registres["GPU_STATE"]=1
                 dispatcher()
@@ -158,4 +161,5 @@ def executer(affichage):
                 if fenetre_ref:
                     fenetre_ref.update()
         affichage.see("end")
+
 
