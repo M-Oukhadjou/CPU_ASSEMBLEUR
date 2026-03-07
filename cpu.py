@@ -41,7 +41,7 @@ def executer(affichage):
                 if registres[nom[s2]]==0:
                     affichage.insert("end","ERR: Div par zero\n")
                     sys.exit()
-                registres[nom[d]]=registres[nom[s1]]/registres[nom[s2]]
+                registres[nom[d]]=registres[nom[s1]]//registres[nom[s2]]
                 affichage.insert("end",f"DIV: {nom[d]}={nom[s1]}/{nom[s2]}({registres[nom[d]]})\n")
             case(5):#stock
                 code_reg = ram[registres["PC"]]
@@ -158,3 +158,4 @@ def executer(affichage):
                 if fenetre_ref:
                     fenetre_ref.update()
         affichage.see("end")
+
