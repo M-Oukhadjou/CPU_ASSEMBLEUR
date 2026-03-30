@@ -33,4 +33,3 @@ if __name__ == "__main__":
     gpu.fenetre_ref=fenetre
     gpu.ecran_ref=ecran
     fenetre.mainloop()
-    fenetre.mainloop()
