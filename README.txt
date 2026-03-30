@@ -95,7 +95,7 @@ Suite de Fibonacci :
 Résultat : 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89...
 
 Animation coeur (GPU) :
-Dessine un coeur qui bat sur l'écran 16x16 grâce
+Dessine un coeur sur l'écran 16x16 grâce
 aux instructions GPU et à WAIT.
 
 GPUOP 3 0
