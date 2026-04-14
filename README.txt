@@ -76,30 +76,38 @@ EXEMPLES DE PROGRAMMES
 
 Suite de Fibonacci :
 
-    LOAD 0 0
-    LOAD 1 1
-    LOAD 8 2
-    boucle:
-    STK 2
-    ADD 2 0 1
+LOAD 600 0
+LOAD 10 1
+LOAD 1 2
+
+STOREIND 2 0
+ADD 0 0 2
+STOREIND 2 0
+ADD 0 0 2
+
+main_loop:
     STK 1
-    POP 0
-    STK 2
+    CALL calculer_suivant
+    STOREIND 2 0
+    LOAD 1 2
+    ADD 0 0 2
     POP 1
-    POP 2
-    STK 0
-    LOAD 1 0
-    SUB 2 2 0
-    POP 0
-    STK 0
-    STK 2
-    POP 0
-    JZ fin
-    POP 0
-    JUMP boucle
-    fin:
-    POP 0
+    LOAD 1 2
+    SUB 1 1 2
+    CMP 1 2
+    JGT main_loop
     EXIT
+
+calculer_suivant:
+    STK 0
+    LOAD 1 2
+    SUB 0 0 2
+    PEEK 0 1
+    SUB 0 0 2
+    PEEK 0 2
+    ADD 2 2 1
+    POP 0
+    RET
 
 Résultat : 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89...
 
