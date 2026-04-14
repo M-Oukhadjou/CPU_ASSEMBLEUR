@@ -160,6 +160,55 @@ def executer(affichage):
                 from gpu import fenetre_ref
                 if fenetre_ref:
                     fenetre_ref.update()
+           case(21):#CALL
+                adresse_actuelle=registres["PC"]
+                registres["SP"]+=1
+                ram[registres["SP"]]=adresse_actuelle
+                registres["PC"]=ram[registres["PC"]]
+                affichage.insert("end", f"CALL : la fonction à l'adresse {registres['PC']} est executer\n")
+            case(22):#RET
+                if registres["SP"]>800:
+                    adresse_retour=ram[registres["SP"]]
+                    registres["SP"]-=1
+                    registres["PC"]=adresse_retour
+                    affichage.insert("end", f"RET : retour à l'adresse {registres['PC']}\n")
+                else:
+                    affichage.insert("end", "Stackunderflow\n")
+            case(23):#MOV
+                source,desti=ram[registres["PC"]],ram[registres["PC"]+1]
+                registres["PC"]+=2
+                registres[nom[desti]]=registres[nom[source]]
+                affichage.insert("end", f"MOV : registre{registres[nom[source]]} enregistrer dans le registre {registres[nom[desti]]}\n")
+            case(24):#STORE
+                registre_a_store=ram[registres["PC"]]
+                registres["PC"]+=1
+                adresse_d_enregistrement=ram[registres["PC"]]
+                registres["PC"]+=1
+                if adresse_d_enregistrement < len(ram) and registre_a_store < len(nom) and adresse_d_enregistrement >= 0:
+                    ram[adresse_d_enregistrement]=registres[nom[registre_a_store]]
+                    affichage.insert("end", f"STORE : {registres[nom[registre_a_store]]} enregistrer à l'adresse {adresse_d_enregistrement}\n")
+                elif registre_a_store >= len(nom):
+                    affichage.insert("end", "Registre invalide\n")
+                elif adresse_d_enregistrement >= len(ram) or adresse_d_enregistrement < 0:
+                    affichage.insert("end", "Adresse invalide\n")
+            case(25):#STOREIND
+                source,desti=ram[registres["PC"]],ram[registres["PC"]+1]
+                registres["PC"]+=2
+                if source < len(nom) and desti < len(nom):
+                    ram[registres[nom[desti]]]=registres[nom[source]]
+                    affichage.insert("end", f"STORE_INDIRECT : {registres[nom[source]]} enregistrer dans l'adresse {registres[nom[desti]]}\n")
+                elif source >= len(nom) or desti >= len(nom):
+                    affichage.insert("end", "Registre invalide\n")
+            case(26):#PEEK
+                source,desti=ram[registres["PC"]],ram[registres["PC"]+1]
+                registres["PC"]+=2
+                if source >= len(nom) or desti >= len(nom):
+                    affichage.insert("end", "Registre invalide\n")
+                elif registres[nom[source]]<0 or registres[nom[source]]> len(ram):
+                    affichage.insert("end", "Adresse invalide\n")
+                else:
+                    registres[nom[desti]]=ram[registres[nom[source]]]
+                    affichage.insert("end", f"PEEK : Valeur enregistrer dans l'adresse {registres[nom[source]]} enregistrer dans le registre {nom[desti]}\n")
         affichage.see("end")
 
 
