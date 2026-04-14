@@ -18,7 +18,13 @@ INSTRUCTIONS_SET={
     "GPUOP": (17, 1),
     "GPULIM": (18,3),
     "GPUSTART": (19,1),
-    "WAIT": (20, 1)
+    "WAIT": (20, 1),
+    "CALL": (21, 1),
+    "RET": (22, 0),
+    "MOV": (23, 2),
+    "STORE": (24, 2),
+    "STOREIND": (25, 2),
+    "PEEK": (26, 2)
 }
 def label(donnee):
     adresse=0
