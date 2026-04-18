@@ -160,7 +160,7 @@ def executer(affichage):
                 from gpu import fenetre_ref
                 if fenetre_ref:
                     fenetre_ref.update()
-           case(21):#CALL
+            case(21):#CALL
                 adresse_actuelle=registres["PC"]
                 registres["SP"]+=1
                 ram[registres["SP"]]=adresse_actuelle
