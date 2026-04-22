@@ -22,9 +22,11 @@ EduPython : https://edupython.tuxfamily.org/
 ARCHITECTURE DU PROJET:
 
 cpu_assembleur/
-    assembler.py = Traduction du code assembleur en "langage machine"
-    cpu.py       = Exécution des instructions, gestion des registres et de la RAM
-    gpu.py       = GPU virtuelle avec VRAM et kernels simuler
+    assembleur.py = Traduction du code assembleur en "langage machine"
+    cpu_poo.py   = Exécution des instructions, gestion des registres et de la RAM
+    gpu_poo.py   = GPU virtuelle avec VRAM et kernels simuler
+    ordinateur_poo.py  = Système central gérant la communication entre le CPU, le GPU et le Driver.
+    PCIe.py          = Simule le bus de communication pour la transmission de données
     main.py      = Interface graphique PyQt6
 
 Registres disponibles :
